@@ -1,0 +1,55 @@
+name: 'Shieldly — AI-Powered Security Analysis'
+description: 'AI-Powered security analysis for AWS IAM policies and CloudFormation templates. Fails the build on severity threshold.'
+author: 'Shieldly'
+branding:
+  icon: 'shield'
+  color: 'blue'
+
+inputs:
+  api-key:
+    description: 'Shieldly API key (sk_live_...). Required — create an API key (Builder plan or above) at https://www.shieldly.io/app/api and store it as a repo secret. Demo mode is not available in CI.'
+    required: true
+    default: ''
+  scan-path:
+    description: >
+      Directory or file to scan. Point at your IaC output directory after your deploy/synth step —
+      CDK writes to ./cdk.out (after cdk synth or cdk deploy), Serverless Framework writes to
+      ./.serverless (after serverless package or deploy). Also accepts a direct .json/.yaml file path.
+      When no IaC files are found, the action posts an informational PR comment and exits cleanly
+      rather than failing the workflow.
+    required: false
+    default: '.'
+  fail-on-severity:
+    description: 'Fail the workflow if any finding is at or above this severity. Options: Critical, High, Medium, Low, none'
+    required: false
+    default: 'High'
+  post-pr-comment:
+    description: 'Post analysis results as a PR comment. Set to false to disable. Requires GITHUB_TOKEN with pull-requests: write permission.'
+    required: false
+    default: 'true'
+  github-token:
+    description: 'GitHub token used to post PR comments. Defaults to the GITHUB_TOKEN environment variable.'
+    required: false
+    default: ''
+  api-url:
+    description: 'Shieldly API base URL (override for self-hosted or dev).'
+    required: false
+    default: 'https://api.shieldly.io'
+
+outputs:
+  score:
+    description: 'Security score (0-100) from the analysis.'
+    value: ${{ steps.analyze.outputs.score }}
+  risk-level:
+    description: 'Overall risk level: Critical, High, Medium, or Low.'
+    value: ${{ steps.analyze.outputs.risk-level }}
+  findings-count:
+    description: 'Total number of findings returned.'
+    value: ${{ steps.analyze.outputs.findings-count }}
+  critical-count:
+    description: 'Number of Critical severity findings.'
+    value: ${{ steps.analyze.outputs.critical-count }}
+
+runs:
+  using: 'node24'
+  main: 'dist/index.js'
