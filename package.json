@@ -1,0 +1,27 @@
+{
+  "name": "shieldly-github-action",
+  "version": "1.2.0",
+  "description": "AI-Powered Security Analysis for AWS IAM policies and CloudFormation templates.",
+  "private": true,
+  "license": "MIT",
+  "keywords": [
+    "github-action",
+    "iam",
+    "security",
+    "aws",
+    "policy",
+    "cloudformation",
+    "ai"
+  ],
+  "scripts": {
+    "build": "esbuild src/index.js --bundle --outfile=dist/index.js --platform=node --target=node24 --format=cjs --minify --external:undici",
+    "build:dev": "esbuild src/index.js --bundle --outfile=dist/index.js --platform=node --target=node24 --format=cjs --sourcemap --external:undici"
+  },
+  "dependencies": {
+    "@actions/core": "^1.11.1",
+    "@actions/github": "^6.0.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0"
+  }
+}
